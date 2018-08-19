@@ -1,0 +1,14 @@
+[Unit]
+Description=A telekom_fon_connect script to go automatic online
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+ExecStart=/opt/telekom_fon_connect/telekom_fon_connect.py -s -d
+Environment=telekom_fon_connect_cfg=/opt/telekom_fon_connect/telekom_fon_connect.conf
+
+[Install]
+WantedBy=multi-user.target
