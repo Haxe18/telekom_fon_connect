@@ -51,7 +51,8 @@ def initialize_logger(level,log_file,args):
 def reset_http_debug_out(http_log):
     # Remember to reset sys.stdout!
     sys.stdout = sys.__stdout__
-    debug_info = ''.join(http_log.content).replace('\\r', '').decode('string_escape').replace('\'', '')
+    # Remove \r in Log, remove the byte prefix - is already a string with b and no byte tyoe in http_log.content list, replace \n to be printed as newline and remove lines with only ' in
+    debug_info = ''.join(http_log.content).replace('\\r', '').replace('b\'', '\'').replace('\\n', '\n').replace('\'', '')
 
     # Remove empty lines and print in Debug Channel
     logging.debug("\n".join([ll.rstrip() for ll in debug_info.splitlines() if ll.strip()]))
