@@ -7,7 +7,7 @@ try:                                                                            
 except ImportError:
     import configparser                                                                  # Python 3
 import os                                                                                # Import os to read config file path from env var
-import requests                                                                          # For http(s) reguests in python
+import requests                                                                          # For http(s) requests in python
 import sys                                                                               # For exit (codes) and for correct http debug Log in debug logging
 import time                                                                              # For sleep in while loop
 from bs4 import BeautifulSoup                                                            # Import BeautifulSoup for parsing html
@@ -138,7 +138,7 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     logging.debug('Hotspot login and status page is ' + login_url)
     ## END Do a request to get the Login URL ##
 
-    ## START Do reguest to login page to get source code and get post informations to post ##
+    ## START Do request to login page to get source code and get post informations to post ##
     logging.info('Doing request to hotspot login page to fetch source code')
     logging.debug('Doing request to ' + login_url + ' to fetch source code to create post data')
     fon_source = do_request(url=login_url, level=loglvl)                                  # Get source of login page to extract some infos to create a session
@@ -172,7 +172,7 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     postdata = json.dumps( {'location': {}, 'partnerRegRequest': {}, 'rlpRequest': divdata, 'session': {}, 'user': {}} )    # Create json to post to api
 
     logging.debug('Postdata created')
-    ## END Do reguest to Login page to get source code and get post informations to post ##
+    ## END Do request to Login page to get source code and get post informations to post ##
 
     ## START Starting login session at Telekom rest api ##
     url = telekom_api_endpoint + session_api_url                                          # Build url to get session
@@ -193,7 +193,7 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     ## START Try to login with credentials @ Telekom fon hotspot ##
     url = telekom_api_endpoint + login_api_url + ';jsessionid=' + session                 # Build url with session for login check
     logindata = json.dumps( {"username": username,"password": password} )                 # Create json with login credentials
-    login_status = do_request(url, post=logindata, level=loglvl)                        # Do login
+    login_status = do_request(url, post=logindata, level=loglvl)                          # Do login
 
     if login_status is 'error':                                                           # If request failed and return is only offline
         return 'offline'                                                                  # return direct offline, errors are already thrown
@@ -300,7 +300,7 @@ def main():
     run = True                                                                            # while forever
 
     while run == True:                                                                    # While run = True, run forever
-        online_request = do_request(url=test_url, do_head_only=True, want_header='location',level=loglvl)  # Do head reguest to check online status
+        online_request = do_request(url=test_url, do_head_only=True, want_header='location',level=loglvl)  # Do head request to check online status
 
         if online_request is 'error':                                                     # If request failed and return is only offline
             status = 'offline'                                                            # Return direct offline, errors are already thrown

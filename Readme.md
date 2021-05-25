@@ -12,6 +12,7 @@ On top (as you should always do when using uncypted wlan networks) i use a openv
 
 The script is testet/used on Raspbian/Debian Stretch (9) with python version 2.7.13 and 3.5.3.
 The script is fully compatible to python2 and python3, doesn't matter :)  
+
 On Debian you first need to install:  
 python2:
 ```
@@ -19,7 +20,7 @@ apt-get install python-requests python-bs4 python-configparser
 ```
 python3:
 ```
-apt-get install python3-requests python-bs4 python-configparser
+apt-get install python3-requests python3-bs4 python-configparser
 ```
 
 1. ! On Raspberry Pi 1B the script takes a while to load the request library, please be patient
@@ -90,7 +91,7 @@ Time to wait in deamon mode between online checks.
 
 ### Credits
 
-A big thanks going out to these guys, for theire questions and answers which helped me with the code:
+A big thanks going out to these persons, for their questions and answers which helped me with their code snippets:
 
 python requests module: https://www.pythonforbeginners.com/requests/using-requests-in-python  
 HTML parse with Beautiful Soap: https://www.crummy.com/software/BeautifulSoup/bs4/doc/  
@@ -101,7 +102,7 @@ Debug logging of (http) requests in correct Debug channel: https://stackoverflow
 
 ## Contributing ...
 
-... is welcome. Either to correct my englisch, adding some nice new features, fix my python code or reporting errors.
+... is welcome. Either to correct my english, adding some nice new features, fix my python code or reporting errors.
 If you report an error, please try to reproduce and copy the full error message.
 Best case would be to tell the fully procedure and run in debug mode.
 Feel free to open issues or merge requests.
