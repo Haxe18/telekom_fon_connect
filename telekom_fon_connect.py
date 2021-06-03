@@ -201,8 +201,12 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     dec_json = json.loads(login_status['rsp_content'])                                    # Decode json return of api
 
     if 'errors' in dec_json and 'redirect' not in dec_json:                               # Catch errors
-        logging.error('Error when login with ' + username + ' @ Telekom fon hotspot, got message ' + dec_json['errors'][0]['description'] )  # Print received error message
+        logging.error('Error while login with ' + username + ' @ Telekom fon hotspot, got message ' + dec_json['errors'][0]['description'] )  # Print received error message
         logging.error('Maybe your given credentials are not valid, please check')
+        do_login.error_counter += 1                                                       # Increase error counter var by +1
+        if do_login.error_counter < 3:                                                    # Check if error_counter limit of 3 is reached
+            logging.error('Will sleep now 5s, maybe the error is temporary ?')            # Print message to user
+            time.sleep(5)                                                                 # Exec the printed message :)
         return 'offline'
 
     logging.info('Authentification @ Telekom api was successfull, got login url')
@@ -292,6 +296,9 @@ def main():
     # Start logging
     initialize_logger(loglvl,log_file,args)                                               # Pass log level and log file path as arguments to logger setup
 
+    # Init login error_counter with 0
+    do_login.error_counter = 0
+
     # Print some infos @ startup
     logging.debug('Working with configfile: ' + cfg_file)
     logging.info('log_level is : ' + loglvl)
@@ -316,9 +323,14 @@ def main():
             logging.info('You are not online, try to login now')
             if args.statusfile is True:                                                   # If status file wanted
                 do_statusfile(statusfile=statusfile, action='remove')                     # Remove statusfile, we are offline
-            status = do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoint,session_api_url,login_api_url,loglvl,login_url)
-            if status is 'online' and args.statusfile is True:                            # If request was success, return is not only offline and statusfile wanted
-                do_statusfile(statusfile=statusfile, action='create', test_url=test_url, loglvl=loglvl) # Create statusfile
+            if do_login.error_counter < 3:                                                # Check if login failed often in the past
+                status = do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoint,session_api_url,login_api_url,loglvl,login_url)
+                if status is 'online' and args.statusfile is True:                         # If request was success, return is not only offline and statusfile wanted
+                    do_statusfile(statusfile=statusfile, action='create', test_url=test_url, loglvl=loglvl) # Create statusfile
+            else:
+                logging.error('Login failed now ' + str(do_login.error_counter) + ' times, please check (run script in debug mode) and fix the error')
+                logging.error('Therefore the script will now exit - bye bye')
+                sys.exit(1)
 
         if args.daemon is False and status is 'online':                                   # No deamon mode wanted, exit the while loop after first run
             logging.info('Your are now ' + status + ' and because no deamon mode selected i will exit now bye')
