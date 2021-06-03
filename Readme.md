@@ -87,7 +87,7 @@ Currently needed informations for creating a session to login. Maybe more inform
 ```
 sleeptime
 ```
-Time to wait in deamon mode between online checks.
+Seconds to wait in deamon mode between online checks.
 
 ### Credits
 
