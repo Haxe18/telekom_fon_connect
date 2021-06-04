@@ -74,6 +74,14 @@ sleeptime: 30
 ```
 Some explanations to config file:
 ```
+fon_username: ******@t-mobile.de
+```
+Please replace the stars with your mobile number, for example 491512345678.
+Using number only is equal to using username mentionend on the login page.
+Adding @t-mobile.de to the number is equal to using e-mail mentionend on the login page.
+You can find/obtain your crentials either in the "Connect App - HotSpot Manager" or by sending an [sms](https://www.telekom.de/hilfe/mobilfunk-mobiles-internet/mobiles-internet-e-mail/hotspot/konfiguration-nutzen-sicherheit/sms-befehle-zur-nutzung-von-hotspot-mit-mobilfunk-zugangsdaten)
+
+```
 test_url: http://online-status.cf
 ```
 Domain of mine which delivers on http request a 301 to https. With a https request you get your ip as json response and as x-your-ip Header. Is used to define online status.
