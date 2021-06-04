@@ -123,7 +123,7 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
         logging.info('Doing request to ' + test_url + ' to get hotspot status page')
         login_page = do_request(url=test_url, do_head_only=True, want_header='location', level=loglvl)
 
-        if login_page is 'error':                                                         # If request failed and return is only offline
+        if login_page == 'error':                                                         # If request failed and return is only offline
             return 'offline'                                                              # return direct offline, errors are already thrown
 
         login_url = login_page['rsp_content']                                             # Save url of login page
@@ -143,7 +143,7 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     logging.debug('Doing request to ' + login_url + ' to fetch source code to create post data')
     fon_source = do_request(url=login_url, level=loglvl)                                  # Get source of login page to extract some infos to create a session
 
-    if fon_source is 'error':                                                             # If request failed and return is only offline
+    if fon_source == 'error':                                                             # If request failed and return is only offline
         return 'offline'                                                                  # Return direct offline, errors are already thrown
 
     logging.debug('Start parsing html to get post data')
@@ -178,7 +178,7 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     url = telekom_api_endpoint + session_api_url                                          # Build url to get session
     login_check = do_request(url, get_session = True, post=postdata, level=loglvl)      # Do post request to get session
 
-    if login_check is 'error':                                                            # If request failed and return is only offline
+    if login_check == 'error':                                                            # If request failed and return is only offline
         return 'offline'                                                                  # return direct offline, errors are already thrown
 
     if login_check['rsp_code'] != 200:                                                    # Check if session generated. 200 all okay. HTTP-400 when wrong informations posted. 302 if post empty 
@@ -195,7 +195,7 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     logindata = json.dumps( {"username": username,"password": password} )                 # Create json with login credentials
     login_status = do_request(url, post=logindata, level=loglvl)                          # Do login
 
-    if login_status is 'error':                                                           # If request failed and return is only offline
+    if login_status == 'error':                                                           # If request failed and return is only offline
         return 'offline'                                                                  # return direct offline, errors are already thrown
 
     dec_json = json.loads(login_status['rsp_content'])                                    # Decode json return of api
@@ -216,7 +216,7 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     ## START Login ##
     online_status = do_request(url=login_url, note_timeout=False, level=loglvl)           # Do the final request to be online, ignore timeouts here
 
-    if online_status is 'error':                                                          # If request failed and return is only offline
+    if online_status == 'error':                                                          # If request failed and return is only offline
         return 'offline'                                                                  # return direct offline, errors are already thrown
 
     if online_status['rsp_code'] == 200:                                                  # 200 if timeout or login okay
@@ -229,9 +229,9 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     ## END LOGIN
 
 def do_statusfile(statusfile, action='remove', test_url=None, loglvl = None):
-    if action is 'create' and test_url is not None and loglvl is not None:
+    if action == 'create' and test_url is not None and loglvl is not None:
         your_ip = do_request(url=test_url.replace("http", "https"), do_head_only=True, want_header='X-your-ip', level=loglvl) #Do head to https test_url to fetch ip header
-        if your_ip is not 'error':                                                        # If request for ip was success, return is not only offline
+        if your_ip != 'error':                                                            # If request for ip was success, return is not only offline
             f = open(statusfile, "w")                                                     # Open status file to write
             f.write(your_ip['rsp_content'])                                               # Write current ip saved in content to file
             logging.debug('Written your current ip ' + your_ip['rsp_content'] + ' successfull to file ' + statusfile)
@@ -309,7 +309,7 @@ def main():
     while run == True:                                                                    # While run = True, run forever
         online_request = do_request(url=test_url, do_head_only=True, want_header='location',level=loglvl)  # Do head request to check online status
 
-        if online_request is 'error':                                                     # If request failed and return is only offline
+        if online_request == 'error':                                                     # If request failed and return is only offline
             status = 'offline'                                                            # Return direct offline, errors are already thrown
             if args.statusfile is True:                                                   # If status file wanted
                 do_statusfile(statusfile=statusfile, action='remove')                     # Remove statusfile, we are offline
@@ -325,14 +325,14 @@ def main():
                 do_statusfile(statusfile=statusfile, action='remove')                     # Remove statusfile, we are offline
             if do_login.error_counter < 3:                                                # Check if login failed often in the past
                 status = do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoint,session_api_url,login_api_url,loglvl,login_url)
-                if status is 'online' and args.statusfile is True:                         # If request was success, return is not only offline and statusfile wanted
+                if status == 'online' and args.statusfile is True:                         # If request was success, return is not only offline and statusfile wanted
                     do_statusfile(statusfile=statusfile, action='create', test_url=test_url, loglvl=loglvl) # Create statusfile
             else:
                 logging.error('Login failed now ' + str(do_login.error_counter) + ' times, please check (run script in debug mode) and fix the error')
                 logging.error('Therefore the script will now exit - bye bye')
                 sys.exit(1)
 
-        if args.daemon is False and status is 'online':                                   # No deamon mode wanted, exit the while loop after first run
+        if args.daemon is False and status == 'online':                                   # No deamon mode wanted, exit the while loop after first run
             logging.info('Your are now ' + status + ' and because no deamon mode selected i will exit now bye')
             run = False
         if args.daemon is True:                                                           # If daemon mode, sleep
