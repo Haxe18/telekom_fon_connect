@@ -158,6 +158,10 @@ def do_login(username,password,test_url,rlp_request_whitelist,telekom_api_endpoi
     except Exception as e:                                                                # ... catch exception if html code could not be parsed as wanted
         logging.error('Error when parsing html code to get post data. Either a (temporary) error or script is not working anymore. Will try again')
         logging.debug('Got error ' + str(e) + ' when parsing html to get form data')
+        do_login.error_counter += 1                                                       # Increase error counter var by +1
+        if do_login.error_counter < 3:                                                    # Check if error_counter limit of 3 is reached
+            logging.error('Will sleep now 5s, maybe the error is temporary ?')            # Print message to user
+            time.sleep(5)                                                                 # Exec the printed message :)
         return 'offline'
 
     # Filter dict, keep only elements in post_data_whitelist
